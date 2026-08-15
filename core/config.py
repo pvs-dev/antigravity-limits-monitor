@@ -43,11 +43,21 @@ class AppConfig:
     manual_token: str = ""
 
 
+def get_app_data_dir() -> str:
+    """Returns directory in %LOCALAPPDATA% to store config and logs."""
+    local_appdata = os.getenv("LOCALAPPDATA")
+    if local_appdata:
+        dir_path = os.path.join(local_appdata, "AntigravityLimitsMonitor")
+    else:
+        dir_path = os.path.join(os.path.expanduser("~"), ".antigravity_limits")
+    os.makedirs(dir_path, exist_ok=True)
+    return dir_path
+
+
 class ConfigManager:
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            self.config_path = os.path.join(base_dir, "config.json")
+            self.config_path = os.path.join(get_app_data_dir(), "config.json")
         else:
             self.config_path = config_path
         self.config = self.load()

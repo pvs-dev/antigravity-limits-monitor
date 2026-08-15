@@ -7,6 +7,15 @@ from core.models import AccountStatus
 from core.config import AppConfig
 
 
+def get_resource_path(relative_path: str) -> str:
+    """Returns absolute path to resource, compatible with PyInstaller bundles."""
+    import sys
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_dir, relative_path)
+
+
 class SystemTrayManager(QObject):
     """Manages the Windows System Tray Icon, notifications, and context menu."""
 
@@ -21,10 +30,9 @@ class SystemTrayManager(QObject):
         self.tray_icon = QSystemTrayIcon(self)
         self.account_status = AccountStatus(is_connected=False)
 
-        self._base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self._ico_green = os.path.join(self._base_dir, "assets", "icon.ico")
-        self._ico_red = os.path.join(self._base_dir, "assets", "icon_red.ico")
-        self._ico_amber = os.path.join(self._base_dir, "assets", "icon_amber.ico")
+        self._ico_green = get_resource_path(os.path.join("assets", "icon.ico"))
+        self._ico_red = get_resource_path(os.path.join("assets", "icon_red.ico"))
+        self._ico_amber = get_resource_path(os.path.join("assets", "icon_amber.ico"))
 
         self.init_icon()
         self.init_menu()

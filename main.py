@@ -5,21 +5,25 @@ import threading
 from PySide6.QtCore import Qt, QTimer, Signal, QObject
 from PySide6.QtWidgets import QApplication
 
-log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.log")
-logging.basicConfig(
-    filename=log_path,
-    level=logging.DEBUG,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    force=True
-)
-logging.info("Starting Antigravity Limits Monitor...")
-
 from core.models import AccountStatus
-from core.config import ConfigManager, AppConfig
+from core.config import ConfigManager, AppConfig, get_app_data_dir
 from core.collector import QuotaCollector
 from ui.overlay import FloatingOverlay
 from ui.tray import SystemTrayManager
 from ui.settings_dialog import SettingsDialog
+
+try:
+    log_dir = get_app_data_dir()
+    log_path = os.path.join(log_dir, "app.log")
+    logging.basicConfig(
+        filename=log_path,
+        level=logging.DEBUG,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        force=True
+    )
+    logging.info("Starting Antigravity Limits Monitor...")
+except Exception:
+    pass
 
 
 
